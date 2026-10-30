@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CyberBuddy – Cyber awareness tool</title>
+<style>
+:root{--bg:#f7f5f0;--panel:#fff;--tx:#1d2321;--mut:#5f665f;--ac:#2d6a4f;--ac-bg:#e6efe9;--ln:#d9d5ca;--amb:#fbf1d9;--amb-t:#6a4b00;--red:#a4262c;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151a18;--panel:#1d2421;--tx:#e8ece9;--mut:#a0aaa3;--ac:#7cc4a0;--ac-bg:#25362e;--ln:#333d38;--amb:#3a3114;--amb-t:#f0d58a;--red:#ff9a9a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#151a18;--panel:#1d2421;--tx:#e8ece9;--mut:#a0aaa3;--ac:#7cc4a0;--ac-bg:#25362e;--ln:#333d38;--amb:#3a3114;--amb-t:#f0d58a;--red:#ff9a9a;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100dvh;display:flex;flex-direction:column}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+header{border-bottom:1px solid var(--ln);background:var(--panel)}
+.bar{max-width:720px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.bar svg{width:22px;height:22px;color:var(--ac);flex:none}
+.bar b{font-size:1rem}.lab{font-size:.68rem;letter-spacing:.09em;color:var(--mut);font-weight:600}
+.loc{margin-left:auto;font-size:.76rem;color:var(--mut);text-align:right}
+main{flex:1;width:100%;max-width:720px;margin:0 auto;padding:24px 16px 8px}
+h1{font-size:1.45rem;line-height:1.25;margin:0 0 6px}
+.sub{margin:0 0 18px;color:var(--mut);max-width:56ch}
+.starts{list-style:none;margin:0 0 8px;padding:0;border-top:1px solid var(--ln)}
+.starts button{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--ln);cursor:pointer}
+.starts button:hover{color:var(--ac)}.starts button:focus-visible{outline:2px solid var(--ac);outline-offset:-2px}
+.starts svg{width:16px;height:16px;flex:none;color:var(--mut)}
+.starts .u{color:var(--red);font-weight:600}
+#log{display:flex;flex-direction:column;gap:18px;margin-top:6px}
+.b{border-left:3px solid var(--ac);padding:2px 0 2px 14px;max-width:62ch}
+.b .who{font-size:.72rem;letter-spacing:.06em;font-weight:600;color:var(--ac);margin-bottom:2px}
+.b p{margin:0 0 8px}.b ul,.b ol{margin:0 0 10px;padding-left:20px}.b li{margin:3px 0}
+.b .src{font-size:.88rem;color:var(--mut);border-top:1px solid var(--ln);padding-top:8px}
+.b.alert{border-left-color:var(--red)}.b.alert .who{color:var(--red)}
+.b.warn{border-left-color:#b7791f}.b.warn .who{color:var(--amb-t)}
+.u{align-self:flex-end;max-width:80%;background:var(--ac-bg);padding:8px 12px;border-radius:4px;word-wrap:break-word}
+.opts{display:flex;flex-direction:column;gap:6px;margin:4px 0 0}
+.opts button{font:inherit;text-align:left;padding:9px 12px;border:1px solid var(--ln);background:var(--panel);color:var(--tx);border-radius:4px;cursor:pointer}
+.opts button:hover{border-color:var(--ac);color:var(--ac)}
+.dock{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--ln);padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px))}
+.dock>div{max-width:720px;margin:0 auto;padding:0 16px}
+form{display:flex;gap:8px}
+input{flex:1;min-width:0;font:inherit;padding:10px 12px;border:1px solid var(--ln);border-radius:4px;background:var(--panel);color:var(--tx)}
+form button{font:inherit;font-weight:600;border:0;border-radius:4px;background:var(--ac);color:var(--bg);padding:0 16px;cursor:pointer;display:flex;align-items:center;gap:6px}
+form button svg{width:16px;height:16px}
+.note{margin:6px 0 0;font-size:.8rem;color:var(--amb-t);background:var(--amb);padding:5px 8px;border-radius:3px}
+#hint{min-height:1.2em;margin:4px 0 0;font-size:.8rem;color:var(--red)}
+details{max-width:720px;margin:0 auto;padding:6px 16px 14px;font-size:.84rem;color:var(--mut);width:100%}
+summary{cursor:pointer}details ul{padding-left:18px;margin:6px 0}
+.ghost{all:unset;cursor:pointer;color:var(--mut);font-size:.8rem;text-decoration:underline;margin-top:10px;display:inline-block}
+</style>
+</head>
+<body>
+<header><div class="bar">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/></svg>
+<div><b>CyberBuddy</b><div class="lab">CYBER AWARENESS TOOL</div></div>
+<div class="loc">Conversations are not stored.<br>No login or tracking.</div>
+</div></header>
+<main>
+<div id="intro">
+<h1>What’s happening?</h1>
+<p class="sub">Get practical guidance on suspicious messages, account security, unsafe downloads, and other online threats.</p>
+<ul class="starts" id="starts"></ul>
+</div>
+<div id="log" aria-live="polite"></div>
+<button class="ghost" id="reset" type="button" hidden>Start over</button>
+</main>
+<div class="dock"><div>
+<form id="f" autocomplete="off"><input id="q" maxlength="300" placeholder="Or describe your situation…" aria-label="Your message" aria-describedby="priv hint"><button type="submit">Send<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></form>
+<p id="hint" role="status"></p>
+<p class="note" id="priv">Never share passwords, OTPs, PINs, card details, or other sensitive information.</p>
+</div></div>
+<p class="lab" style="text-align:center;padding:4px 16px 12px;margin:0">GENERAL GUIDANCE ONLY. NOT A REPLACEMENT FOR OFFICIAL SUPPORT.</p>
+<script>
+const R='<p class="src">Report financial fraud: National Cyber Crime Helpline <b>1930</b> or <b>cybercrime.gov.in</b>. Suspicious calls, SMS or WhatsApp messages can also be reported at <b>sancharsaathi.gov.in</b>. Your bank’s official number is on your card or app.</p>';
+const N={
+msg:{h:`<p>Don’t click links, open attachments or reply yet. Does the message ask for anything?</p>`,o:[['It asks for money, an OTP or urgent action','scam'],['It contains a link or attachment','link_check'],['It just looks odd. I haven’t acted on it','phish']]},
+scam:{t:'alert',h:`<p><b>Stop replying and don’t send anything.</b> Banks, police and government offices don’t ask for OTPs, PINs or passwords, or demand instant payment.</p><ul><li>Don’t follow their links or install apps they suggest, especially screen-sharing apps.</li><li>Verify separately: contact the organisation using the number on its official website, your card, or its own app, not the number in the message.</li><li>Block the sender and keep screenshots.</li></ul><p>Have you already responded?</p>`,o:[['I sent money','paid'],['I shared an OTP, PIN or card details','shared'],['I shared a password','hack_confirmed'],['No, nothing yet','scam_safe']]},
+scammed:{t:'alert',h:`<p><b>Stop contact with them now</b> and don’t pay anything more, including “fees” to get money back. What did you share?</p>`,o:[['I sent money','paid'],['I shared an OTP, PIN or card details','shared'],['I shared a password','hack_confirmed'],['Nothing yet, I’m just unsure','scam']]},
+scam_safe:{h:`<p>Good, you’re in a safe position. Block and report the number or account, delete the message, and hang up if they call again. Common pretexts are fake refunds, KYC updates, courier fees, job offers and “digital arrest” calls.</p>${R}`,o:[['How do I spot phishing?','phish']]},
+paid:{t:'alert',h:`<p><b>Act quickly. The first hour matters most.</b></p><ol><li>Call your bank or payment app on its official number. Ask them to block the card or account and flag the receiving account.</li><li>Call <b>1930</b> or file at cybercrime.gov.in. Have transaction IDs, amounts, times, the scammer’s number or UPI ID, and screenshots ready.</li><li>Stop all contact. “Recovery” offers are usually a second scam.</li><li>Change passwords on any account you used.</li></ol>${R}`,o:[['Help me secure my accounts','hack_confirmed']]},
+shared:{t:'alert',h:`<p>Treat those details as compromised.</p><ol><li>Call your bank now to block the card or freeze UPI/net banking.</li><li>Review recent transactions and report any you don’t recognise.</li><li>Change banking passwords and PINs from a trusted device.</li></ol>${R}`,o:[['I also sent money','paid'],['Help me secure my accounts','hack_confirmed']]},
+hack:{t:'alert',h:`<p><b>Go to the official website or app by typing the address yourself, not through a link in a message.</b> What are you seeing?</p>`,o:[['I’m locked out or my password was changed','hack_locked'],['Logins, messages or changes I didn’t make','hack_confirmed'],['Just a feeling that something is off','hack_suspected']]},
+hack_suspected:{h:`<p>Check before assuming the worst:</p><ul><li>Open the account’s security page and review recent logins and signed-in devices.</li><li>Look at sent mail, forwarding rules and connected apps.</li><li>Change the password anyway as a precaution, and turn on two-factor authentication.</li></ul><p>If you find anything unfamiliar, treat it as a confirmed compromise.</p>`,o:[['I found activity that isn’t mine','hack_confirmed'],['How does 2FA work?','pw']]},
+hack_locked:{h:`<p>Use the platform’s official “Forgot password” or account recovery page. If your email account is the one affected, recover that first, because other accounts reset through it. If recovery fails, use the platform’s official help centre. Once back in, follow the full steps.</p>`,o:[['Show the full steps','hack_confirmed']]},
+hack_confirmed:{t:'alert',h:`<p>Do these in order, on a device you trust:</p><ol><li>Open the official site or app directly.</li><li>Change the password to a long, unique one.</li><li>Sign out of all sessions and remove devices you don’t know.</li><li>Check recovery email and phone, forwarding rules and connected apps.</li><li>Turn on two-factor authentication (an authenticator app is better than SMS).</li><li>Change the password on any other account that used the same one.</li><li>Watch bank statements, and tell contacts not to trust odd messages from you.</li></ol>${R}`,o:[['I reused this password elsewhere','hack_reuse']]},
+hack_reuse:{h:`<p>Change it everywhere it was used, starting with email, then banking and payments, then social and shopping. Give each account its own password. A password manager makes that manageable. You can check whether your email appeared in a known breach at haveibeenpwned.com.</p>`,o:[['Password tips','pw']]},
+link:{t:'alert',h:`<p><b>Close the page and don’t enter anything else.</b> What happened after you clicked?</p>`,o:[['I only opened it','link_opened'],['I entered a password or other details','link_creds'],['A file downloaded or I installed something','link_file'],['It asked for permissions or notifications','link_perm']]},
+link_opened:{h:`<p>Opening a page alone is usually low risk, but not zero. Close the tab, don’t go back, and keep your browser and system updated. Run a scan if the device acts strangely. Report the message as phishing or spam, and expect follow-up attempts.</p>`,o:[['How do I check links safely?','link_check']]},
+link_creds:{t:'alert',h:`<p>Treat what you entered as compromised.</p><ol><li>Change that password from the official site or app, using a trusted device.</li><li>Change it anywhere else you used it, and turn on two-factor authentication.</li><li>Sign out other sessions and check recent account activity.</li><li>If you entered card, UPI or banking details or an OTP, call your bank immediately.</li></ol>${R}`,o:[['Show full account steps','hack_confirmed']]},
+link_file:{t:'alert',h:`<ol><li>Don’t open the file again. If you installed something, turn off Wi-Fi and mobile data.</li><li>Uninstall unknown apps. On Android, remove any device-admin or accessibility access first.</li><li>Run a full scan with built-in protection (Windows Security, Play Protect).</li><li>From a different, clean device, change passwords and review your banking apps.</li><li>If problems continue, back up personal files and factory reset. If a banking app or remote-control tool was involved, call your bank.</li></ol>`,o:[['Safe download tips','malware']]},
+link_perm:{h:`<p>Remove what you granted. For browser notifications, open the site’s settings and set notifications to Block. For an app, go to Settings, Apps, Permissions, revoke access, then uninstall it. If you signed in with Google, Facebook or similar, remove the app under your account’s connected apps.</p>`,o:[['I also entered details','link_creds']]},
+link_check:{h:`<p>You can assess a message without opening its link:</p><ul><li>Read the full address (long-press or hover). The real site is the part just before the first single “/”, so <i>bank.example.xyz</i> belongs to example.xyz.</li><li>Be wary of shortened links and QR codes from people you can’t verify.</li><li>HTTPS and the padlock only mean the connection is encrypted. Scam sites use them too.</li><li>Open the official site or app yourself instead.</li></ul><p>I can’t scan or verify a link for you. A reputable URL checker can give a second opinion.</p>`,o:[['I already clicked it','link']]},
+phish:{h:`<p>Phishing messages try to rush you into clicking, logging in or paying.</p><ul><li>Urgent threats such as “account suspended in 24 hours”.</li><li>A sender address or domain that’s slightly off.</li><li>Unexpected links, attachments or payment requests.</li></ul><p>Don’t reply or call numbers in the message. Go to the official site yourself, then report and delete it.</p>`,o:[['I clicked the link','link'],['They asked for money or an OTP','scam']]},
+pw:{h:`<ul><li>Use long passphrases (14+ characters), unique for each account.</li><li>Store them in a password manager so you only remember one strong master passphrase.</li><li>Turn on two-factor authentication, starting with email and banking. An authenticator app or passkey beats SMS codes.</li><li>Never share OTPs or backup codes with anyone.</li></ul>`,o:[['Someone accessed my account','hack']]},
+malware:{h:`<ul><li>Install apps only from official stores or the maker’s own site. Avoid cracked software and APK files from messages.</li><li>Turn on automatic updates and built-in protection.</li><li>Keep backups of important files, which is the best defence against ransomware.</li></ul><p>If you think a device is infected, disconnect it from the internet, scan it, and change passwords from another device.</p>`,o:[['I downloaded something unknown','link_file']]},
+wifi:{h:`<ul><li>On public Wi-Fi, avoid banking and other sensitive logins. Mobile data is safer.</li><li>Confirm the exact network name with staff, since fake look-alike networks exist.</li><li>Check for HTTPS, turn off auto-connect and file sharing, and keep 2FA on for your accounts.</li><li>A reputable paid VPN encrypts traffic on shared networks. It doesn’t stop phishing or malware, and free VPNs may collect your data.</li></ul>`,o:[['Password tips','pw'],['Safe download tips','malware']]},
+social:{h:`<p>Social engineering manipulates people rather than systems: someone posing as a bank agent, boss, courier or friend.</p><ul><li>Verify through a second channel you already trust.</li><li>Be wary of urgency, secrecy and offers that seem too good.</li><li>Share less online (birthdate, address, travel plans, ID photos) and review privacy and app permissions.</li></ul>`,o:[['Someone asked for money or an OTP','scam'],['How do I spot phishing?','phish']]}
+};
+const S=[['I received a suspicious message.','msg'],['I think I’ve been scammed.','scammed',1],['Someone may have accessed my account.','hack',1],['I clicked a suspicious link.','link',1],['How do I protect my passwords?','pw'],['Is public Wi-Fi safe?','wifi']];
+const K=[['scam',['scam','otp','refund','lottery','prize','fraud','upi','gift card','kyc','digital arrest','blackmail','sextortion','sent money','investment','job offer','pretending','urgent','pressure','call real','phone call','impersonat']],
+['hack',['hacked','compromised','accessed','access my','unauthori','someone logged','locked out','hijack','unknown login','broke into','not me']],
+['link',['clicked','link','attachment','qr','url','shortened','suspicious file','https']],
+['phish',['phish','fake email','spam','smish','sms','suspicious message','suspicious email','fake website']],
+['pw',['password','2fa','mfa','two factor','two-factor','authenticator','passkey','passphrase','2-step']],
+['malware',['malware','virus','ransomware','download','antivirus','trojan','spyware','pirated','crack','apk','infected','install']],
+['wifi',['wifi','wi-fi','vpn','hotspot','public network','router']],
+['social',['social engineering','privacy','oversharing','social media','data breach','personal data','personal information','stranger','catfish','permissions']]]
+.map(([id,k])=>[id,k.map(w=>[new RegExp('\\b'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')),w.length>5?2:1])]);
+const P=[[/(entered|typed|gave|put).{0,25}(password|login|details|otp|card)/,'link_creds'],
+[/(download|install|open)ed.{0,30}(file|app|apk|attachment|software|source|unknown)/,'link_file'],
+[/(only|just) (opened|clicked)|(did not|didn'?t|haven'?t|without) (enter|type|download|install|give)/,'link_opened'],
+[/(sent|paid|transferred|lost) .{0,12}(money|rupees|amount|₹)|lost money/,'paid'],
+[/(been|got|was|am i) (scammed|cheated|defrauded)/,'scammed'],
+[/(can'?t|cannot|unable to) (log ?in|sign in|access)|password (was )?changed/,'hack_locked']];
+const log=document.getElementById('log'),q=document.getElementById('q'),hint=document.getElementById('hint'),intro=document.getElementById('intro'),reset=document.getElementById('reset');
+const arrow='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function scroll(){log.lastElementChild&&log.lastElementChild.scrollIntoView({block:'start',behavior:'smooth'})}
+function user(t){const d=document.createElement('div');d.className='u';d.innerHTML=t;log.appendChild(d)}
+function bot(h,type,opts){clearOpts();const d=document.createElement('div');d.className='b'+(type?' '+type:'');d.innerHTML='<div class="who">CYBERBUDDY</div>'+h;
+ if(opts&&opts.length){const o=document.createElement('div');o.className='opts';opts.forEach(([l,n])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.onclick=()=>pick(l,n);o.appendChild(b)});d.appendChild(o)}
+ log.appendChild(d);reset.hidden=false;intro.hidden=true;scroll()}
+function clearOpts(){log.querySelectorAll('.opts').forEach(e=>e.remove())}
+function node(id){const n=N[id];bot(n.h,n.t,n.o)}
+function pick(label,id){user(esc(label));node(id)}
+function sensitive(s){return /\b\d{4}[ -]?\d{4}[ -]?\d{4}[ -]?\d{1,4}\b/.test(s)||(/\b\d{4,8}\b/.test(s)&&/otp|pin|cvv|code/i.test(s))||/(my|the)\s+(password|pin|otp|cvv)\s+(is|:)/i.test(s)}
+function route(s){for(const [r,id] of P)if(r.test(s))return id;let best=null,bs=0;for(const [id,ks] of K){let sc=0;for(const [re,w] of ks)if(re.test(s))sc+=w;if(sc>bs){bs=sc;best=id}}return best}
+const WORKER_URL='https://agrifury-chat.arlaptop2024.workers.dev/';/* change this to your CyberBuddy worker URL later; set to '' to turn AI off */
+const SYS='You are CyberBuddy, a cybersecurity awareness helper. Answer only about online safety (scams, phishing, passwords, malware, Wi-Fi, privacy, hacked accounts). Keep it under 150 words, give practical steps, never ask for passwords, OTPs, PINs or card details, and never claim to have scanned anything.';
+const fmt=s=>esc(s).split(/\n{2,}/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+async function askAI(text,fallback){
+ if(!WORKER_URL){fallback();return}
+ bot('<p>Looking into that…</p>');const el=log.lastElementChild;
+ try{const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text.slice(0,500),prompt:text.slice(0,500),system:SYS,messages:[{role:'user',content:text.slice(0,500)}]})});
+  if(!r.ok)throw 0;const d=await r.json();const a=d.reply||d.response||d.text||d.answer||d.message||(d.content&&d.content[0]&&d.content[0].text)||(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content);if(!a||typeof a!=='string')throw 0;
+  el.innerHTML='<div class="who">CYBERBUDDY</div>'+fmt(a)+'<p class="src">AI-assisted answer. Check important steps with official sources.</p>';scroll()}
+ catch(e){el.remove();fallback()}}
+function send(text){text=text.trim();if(!text){hint.textContent='Type a question, or choose one of the options above.';q.focus();return}
+ hint.textContent='';q.value='';
+ if(sensitive(text)){user('<i>Message hidden because it may contain private details.</i>');bot('<p><b>Please don’t share OTPs, PINs, passwords or card numbers here.</b> I can’t use them, and nobody legitimate should ask for them. If you already gave them to someone, call your bank or the service straight away.</p>'+R,'alert',[['Someone asked me for these','scam'],['I already shared them','shared']]);return}
+ user(esc(text));const s=text.toLowerCase();
+ if(/^(hi|hello|hey|namaste|help)\b/.test(s)&&s.length<20){bot('<p>Hello. Tell me what’s going on, or choose a situation from the start of the page. If you may be getting scammed right now, say so and I’ll go straight to what to do.</p>');return}
+ if(/^(thanks|thank you)/.test(s)){bot('<p>You’re welcome. If something still feels off, verify through an official channel before acting.</p>');return}
+ const id=route(s);
+ if(id)node(id);else askAI(text,()=>bot('<p>I’m not sure I understood that. I can help with phishing, passwords and 2FA, malware and downloads, public Wi-Fi, privacy and social engineering, and urgent problems like scams, hacked accounts and suspicious links.</p><p>Try describing what happened in a sentence, for example “I got an SMS about my bank account”. For anything else, your bank, the platform’s support or the cybercrime portal is the right place.</p>','warn',[['I think I’ve been scammed','scammed'],['Someone may have accessed my account','hack'],['I clicked a suspicious link','link']]))}
+S.forEach(([l,id,u])=>{const li=document.createElement('li'),b=document.createElement('button');b.type='button';b.innerHTML='<span'+(u?' class="u"':'')+'>'+l+'</span>'+arrow;b.querySelector('span').className='';b.onclick=()=>pick(l,id);li.appendChild(b);document.getElementById('starts').appendChild(li)});
+document.getElementById('f').onsubmit=e=>{e.preventDefault();send(q.value)};
+reset.onclick=()=>{log.innerHTML='';intro.hidden=false;reset.hidden=true;hint.textContent='';window.scrollTo(0,0)};
+</script>
+</body>
+</html>
